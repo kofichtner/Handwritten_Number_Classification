@@ -81,20 +81,25 @@ plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
 
 predicted_classes = np.argmax(model.predict(x_test), axis=-1)
-# correct_indices = np.where(predicted_classes == np.argmax(y_test))[0]
-# incorrect_indices = np.where(predicted_classes != np.argmax(y_test))[0] #FIX
-# print(len(correct_indices)," classified correctly")
-# print(len(incorrect_indices)," classified incorrectly")
-# print("Test Accuracy: ", len(correct_indices)/(len(correct_indices)+len(incorrect_indices)))
-# #plot incorrectly classified images
-# plt.rcParams['figure.figsize'] = (7,14)
-# plt.figure()
+incorrect_indices = []
+correct_indices = []
+for i, predicted_class in enumerate(predicted_classes):
+    if predicted_class != np.argmax(y_test[i]):
+        incorrect_indices.append(i)
+    else:
+        correct_indices.append(i)
+
+print(len(correct_indices)," classified correctly")
+print(len(incorrect_indices)," classified incorrectly")
+#plot incorrectly classified images
+plt.rcParams['figure.figsize'] = (7,14)
+plt.figure()
 # random.shuffle(incorrect_indices)
-# for i, incorrect in enumerate(incorrect_indices[:9]):
-#     plt.subplot(6,3,i+10)
-#     plt.imshow(x_test[incorrect].reshape(28,28), cmap='gray', interpolation='none')
-#     plt.title("Predicted {}, Truth: {}".format(predicted_classes[incorrect], np.argmax(y_test[incorrect])))
-#     plt.xticks([])
-#     plt.yticks([])
-# plt.show()
+for i, incorrect in enumerate(incorrect_indices[:9]):
+    plt.subplot(6,3,i+10)
+    plt.imshow(x_test[incorrect].reshape(28,28), cmap='gray', interpolation='none')
+    plt.title("Predicted {}, Truth: {}".format(predicted_classes[incorrect], np.argmax(y_test[incorrect])))
+    plt.xticks([])
+    plt.yticks([])
+plt.show()
 #TODO add confusion matrix
