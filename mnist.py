@@ -4,6 +4,8 @@ from tensorflow.keras.layers import Dense, Activation, Conv2D, MaxPooling2D, Fla
 import numpy as np
 import os
 import random
+import seaborn as sns
+sns.set_theme()
 
 DATADIR = './'
 IMAGES = 'images.npy'
@@ -83,17 +85,19 @@ plt.show()
 predicted_classes = np.argmax(model.predict(x_test), axis=-1)
 incorrect_indices = []
 correct_indices = []
+confusion_data = np.zeros([10,10])
 for i, predicted_class in enumerate(predicted_classes):
     if predicted_class != np.argmax(y_test[i]):
         incorrect_indices.append(i)
     else:
         correct_indices.append(i)
+    confusion_data[predicted_class][np.argmax(y_test[i])]+=1
 
 print(len(correct_indices)," classified correctly")
 print(len(incorrect_indices)," classified incorrectly")
 #plot incorrectly classified images
-plt.rcParams['figure.figsize'] = (7,14)
-plt.figure()
+plt.rcParams['figure.figsize'] = (10,8)
+# plt.figure()
 # random.shuffle(incorrect_indices)
 for i, incorrect in enumerate(incorrect_indices[:9]):
     plt.subplot(6,3,i+10)
@@ -102,4 +106,9 @@ for i, incorrect in enumerate(incorrect_indices[:9]):
     plt.xticks([])
     plt.yticks([])
 plt.show()
-#TODO add confusion matrix
+heat_map = sns.heatmap(confusion_data, cmap='Blues',annot=True, linewidths=0, fmt='g')
+# plt.tick_params(axis='both', which='major', labelbottom = False, bottom=False, top = False, labeltop=True)
+plt.xlabel("Predicted Values")
+plt.ylabel("True Values")
+plt.title("Confusion Matrix")
+plt.show()
