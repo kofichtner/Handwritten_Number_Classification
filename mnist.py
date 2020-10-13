@@ -56,9 +56,8 @@ x_test, y_test = reshape_data(test_data)
 # Model Template
 model = Sequential() # declare model
 model.add(Dense(10, input_shape=(28*28, ), kernel_initializer='he_normal')) # firstlayer
-model.add(Activation('relu'))
-#### Fill in Model Here## TODO add model layers
-model.add(Dense(2048, activation=tf.nn.relu))
+model.add(Activation('tanh'))
+model.add(Dense(2048, activation=tf.nn.tanh))
 
 model.add(Dense(10, kernel_initializer='he_normal')) # last layer
 model.add(Activation('softmax'))
@@ -93,12 +92,36 @@ for i, predicted_class in enumerate(predicted_classes):
         correct_indices.append(i)
     confusion_data[predicted_class][np.argmax(y_test[i])]+=1
 
+precision_data = np.zeros(10)
+recall_data = np.zeros(10)
+
+for x, arr in enumerate(confusion_data):
+    sum = 0
+    diagonal = 0
+    for y, val in enumerate(arr):
+        sum += val
+        if x == y:
+            diagonal = val
+    precision_data[x] = diagonal / sum
+
+for y in range(10):
+    sum = 0
+    diagonal = 0
+    for x in range(10):
+        sum += confusion_data[x][y]
+        if x == y:
+            diagonal = confusion_data[x][y]
+    recall_data[y] = diagonal / sum
+
+print('precision_data: {0}'.format(precision_data))
+print('recall_data: {0}'.format(recall_data))
+
 print(len(correct_indices)," classified correctly")
 print(len(incorrect_indices)," classified incorrectly")
 #plot incorrectly classified images
 plt.rcParams['figure.figsize'] = (10,8)
 # plt.figure()
-# random.shuffle(incorrect_indices)
+random.shuffle(incorrect_indices)
 for i, incorrect in enumerate(incorrect_indices[:9]):
     plt.subplot(6,3,i+10)
     plt.imshow(x_test[incorrect].reshape(28,28), cmap='gray', interpolation='none')
